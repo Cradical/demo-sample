@@ -14,14 +14,27 @@ export default class HomePage extends Component {
   }
 
   renderModal() {
-    return <UsageLimitModal props={this.props} state={this.state} />
+    if (this.state.exceededStorage || this.state.exceededBandwidth) {
+      return <UsageLimitModal props={this.props} state={this.state} />
+    }
+
+    return null
+  }
+
+  toggleState() {
+    this.setState(prevState => {
+      exceededStorage: !prevState.exceededStorage
+    })
   }
 
   render() {
     return (
       <div>
         <h1>This is the Home Page!! </h1>
-        <Button color='info'>Simulate Storage Modal</Button>
+        <Button onClick={this.toggleState} color='info'>
+          Simulate Storage Modal
+        </Button>
+        {this.renderModal()}
       </div>
     )
   }

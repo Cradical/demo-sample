@@ -1,4 +1,4 @@
-import React, { Component } from 'React'
+import React, { Component } from 'react'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 
 import NotFound from '../NotFound'
@@ -17,6 +17,8 @@ export default class UsageLimitModal extends Component {
     if (props.primsicCtx) {
       this.fetchModalContent()
     }
+
+    console.log('props_for_Modal: ', this.props)
   }
 
   componentDidUpdate(prevProps) {
@@ -58,11 +60,15 @@ export default class UsageLimitModal extends Component {
     return null
   }
 
-  toggleModal(prevProps) {
-    this.setState({ modalToggled: !prevProps.modalToggled })
+  toggleModal() {
+    this.setState(prevState => {
+      modalToggled: !prevState.modalToggled
+    })
   }
 
   render() {
+    const { buttonLabel, className } = this.props
+
     if (this.state.doc) {
       return (
         <div data-wio-id={this.state.doc.id}>
