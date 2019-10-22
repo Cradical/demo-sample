@@ -12,20 +12,23 @@ export default class UsageLimitModal extends Component {
       doc: null,
       notFound: false,
       modalToggled: false,
+      exceededStorage: false,
     }
 
-    if (props.primsicCtx) {
-      this.fetchModalContent()
-    }
+    this.fetchModalContent = this.fetchModalContent.bind(this)
+    this.toggleModalHeader = this.toggleModalHeader.bind(this)
+    this.toggleModalCancel = this.toggleModalCancel.bind(this)
 
-    console.log('props_for_Modal: ', this.props)
+    // if (props.props.primsicCtx) {
+    //   this.fetchModalContent(this.props.props)
+    // }
   }
 
-  componentDidUpdate(prevProps) {
-    this.props.prismicCtx.toolbar()
+  componentDidMount() {
+    this.props.props.prismicCtx.toolbar()
     // We fetch the page only after it's ready to query the api
-    if (!prevProps.prismicCtx) {
-      this.fetchModalContent(this.props)
+    if (this.props.props.prismicCtx) {
+      this.fetchModalContent(this.props.props)
     }
   }
 
@@ -33,17 +36,16 @@ export default class UsageLimitModal extends Component {
     const storageModal = 'storage'
     const bandwidthModal = 'bandwidth'
     let queryParam = ''
-
-    if (this.props.exceededStorage === true) {
+    if (this.props.state.exceededStorage === true) {
       queryParam = storageModal
     } else {
-      if (this.props.exceededBandwidth === true) {
+      if (this.props.state.exceededBandwidth === true) {
         queryParam = bandwidthModal
       }
     }
 
-    if (props.primsicCtx) {
-      return props.primsicCtx.api.getByUID(
+    if (props.prismicCtx) {
+      return props.prismicCtx.api.getByUID(
         'modal',
         queryParam,
         {},
@@ -60,43 +62,47 @@ export default class UsageLimitModal extends Component {
     return null
   }
 
-  toggleModal() {
-    this.setState(prevState => {
-      modalToggled: !prevState.modalToggled
+  toggleModalHeader() {
+    this.props.toggleStorageState()
+    this.setState({
+      doc: null,
+    })
+  }
+
+  toggleModalCancel() {
+    this.props.toggleBandwidthState()
+    this.setState({
+      doc: null,
     })
   }
 
   render() {
-    const { buttonLabel, className } = this.props
-
+    const { state, className } = this.props
     if (this.state.doc) {
       return (
         <div data-wio-id={this.state.doc.id}>
-          <Button color='danger' onClick={this.toggleModal}>
-            {buttonLabel}
-          </Button>
           <Modal
-            isOpen={this.state.modalToggled}
+            isOpen={state.isModalOpen}
             modalTransition={{ timeout: 700 }}
             backdropTransition={{ timeout: 1300 }}
-            toggle={this.toggleModal}
+            toggle={this.props.isModalOpen}
             className={className}
           >
-            <ModalHeader toggle={this.toggleModal}>
-              {PrismicReact.RichText.asText(this.state.doc.data.title)}
+            <ModalHeader toggle={this.toggleModalHeader}>
+              {PrismicReact.RichText.asText(this.state.doc.data.modal_title)}
             </ModalHeader>
-            <img alt='cover' src={this.state.doc.data.image.url} />
+            <img alt='cover' src={this.state.doc.data.modal_image.url} />
             <ModalBody>
               {PrismicReact.RichText.render(
-                this.state.doc.data.description,
-                this.props.prismicCtx.linkResolver
+                this.state.doc.data.modal_message,
+                this.props.props.prismicCtx.linkResolver
               )}
             </ModalBody>
             <ModalFooter>
-              <Button color='primary' onClick={this.toggleModal}>
+              <Button color='primary' onClick={this.props.isModalOpen}>
                 Do Something
               </Button>{' '}
-              <Button color='secondary' onClick={this.toggleModal}>
+              <Button color='secondary' onClick={this.toggleModalCancel}>
                 Cancel
               </Button>
             </ModalFooter>
@@ -106,6 +112,6 @@ export default class UsageLimitModal extends Component {
     } else if (this.state.notFound) {
       return <NotFound />
     }
-    return <h1>Loading</h1>
+    return <h1>Run A User Example</h1>
   }
 }
