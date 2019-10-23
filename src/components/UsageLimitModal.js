@@ -12,7 +12,6 @@ export default class UsageLimitModal extends Component {
       doc: null,
       notFound: false,
       modalToggled: false,
-      exceededStorage: false,
     }
 
     this.fetchModalContent = this.fetchModalContent.bind(this)
@@ -70,7 +69,7 @@ export default class UsageLimitModal extends Component {
   }
 
   toggleModalCancel() {
-    this.props.toggleBandwidthState()
+    this.props.toggleBandwidthModal()
     this.setState({
       doc: null,
     })
@@ -101,7 +100,7 @@ export default class UsageLimitModal extends Component {
             <ModalFooter>
               <Button color='primary' onClick={this.props.isModalOpen}>
                 Do Something
-              </Button>{' '}
+              </Button>
               <Button color='secondary' onClick={this.toggleModalCancel}>
                 Cancel
               </Button>
@@ -112,6 +111,6 @@ export default class UsageLimitModal extends Component {
     } else if (this.state.notFound) {
       return <NotFound />
     }
-    return <h1>Run A User Example</h1>
+    return <div></div>
   }
 }

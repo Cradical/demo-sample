@@ -13,7 +13,7 @@ import HomePage from './components/HomePage'
 const App = props => (
   <Router>
     <Switch>
-      <Redirect exact from='/' to='/help' />
+      <Redirect exact from='/' to='/home' />
       <Route exact path='/help' component={Help} />
       <Route
         exact
